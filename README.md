@@ -14,4 +14,48 @@ Skills Tested:
 -Embedding and retrieval
 -LLM integration
 -Bot interface design
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <img width="509" height="422" alt="image" src="https://github.com/user-attachments/assets/f96043a3-8bdb-43e0-82c0-beb498b9586e" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<img width="518" height="405" alt="image" src="https://github.com/user-attachments/assets/2b794d8b-80c9-4a9f-89fa-ae06b1a9f06d" />
+
