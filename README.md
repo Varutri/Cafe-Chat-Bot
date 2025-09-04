@@ -21,7 +21,7 @@ Skills Tested:
 
 
 
-
+First Photo of my chat bot that also works as a RLHF (REINFORCEMENT LEARNING with HUMAN FEEDBACK)
 
 
 
@@ -51,6 +51,11 @@ Skills Tested:
 
 
 
+Second Photo
+
+
+
+
 
 
 
@@ -58,4 +63,38 @@ Skills Tested:
 
 
 <img width="518" height="405" alt="image" src="https://github.com/user-attachments/assets/2b794d8b-80c9-4a9f-89fa-ae06b1a9f06d" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+After updating the prompt 
+
+
+
+
+
+
+
+
+
+
+
+<img width="474" height="305" alt="image" src="https://github.com/user-attachments/assets/5f72975b-28cb-46e5-99b7-d3e9f8e6724c" />
 
