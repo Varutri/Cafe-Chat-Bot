@@ -1,8 +1,7 @@
-# src/recommender.py
+# recommender.py
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
-from sentence_transformers import util
-
+from typing import List, Dict, Any
 
 class SimpleRecommender:
     """
@@ -12,7 +11,7 @@ class SimpleRecommender:
       - Ratings (avg user rating)
     """
 
-    def __init__(self, docs, embedder):
+    def __init__(self, docs: List[Dict[str, Any]], embedder):
         """
         Args:
             docs: list of dicts with 'text' and 'meta' (must include 'num_orders' and 'avg_rating')
@@ -21,6 +20,9 @@ class SimpleRecommender:
         self.docs = docs
         self.texts = [d['text'] for d in docs]
         self.embedder = embedder
+
+        if not docs:
+            raise ValueError("Docs list cannot be empty.")
 
         # Extract metadata
         self.pop = np.array([d['meta'].get('num_orders', 0) for d in docs], dtype=float)
@@ -31,16 +33,16 @@ class SimpleRecommender:
         self.rating_norm = self._normalize(self.rating)
 
         # Precompute embeddings for all docs to avoid recomputing on every query
-        self.doc_embeddings = self.embedder.encode(self.texts, normalize_embeddings=True)
+        self.doc_embeddings = self.embedder.encode(self.texts, normalize=True)
 
-    def _normalize(self, arr):
+    def _normalize(self, arr: np.ndarray) -> np.ndarray:
         """Utility to normalize metadata values safely"""
         if len(arr) == 0:
             return np.zeros_like(arr)
         scaler = MinMaxScaler()
         return scaler.fit_transform(arr.reshape(-1, 1)).ravel()
 
-    def recommend(self, user_pref_text, k=5, alpha=0.5, beta=0.3, gamma=0.2):
+    def recommend(self, user_pref_text: str, k: int = 5, alpha: float = 0.5, beta: float = 0.3, gamma: float = 0.2) -> List[Dict[str, Any]]:
         """
         Recommend items based on semantic similarity + popularity + rating.
 
@@ -52,11 +54,10 @@ class SimpleRecommender:
             gamma (float): weight for ratings
 
         Returns:
-            list of dicts with {'meta': ..., 'score': ...}
+            list of dicts with {'meta': ..., 'text': ..., 'score': ...}
         """
         # Encode query (normalize to enable cosine similarity via dot product)
-        q_emb = self.embedder.encode([user_pref_text], normalize_embeddings=True)
-        q_emb = np.array(q_emb).squeeze()
+        q_emb = self.embedder.encode([user_pref_text], normalize=True).squeeze()
 
         # Cosine similarity (dot product since embeddings are normalized)
         sims = self.doc_embeddings @ q_emb.T

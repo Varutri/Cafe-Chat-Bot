@@ -1,43 +1,45 @@
-# src/app_streamlit.py
+# app_streamlit.py
 import streamlit as st
 from data_loader import load_items, load_faq, load_orders, build_document_store
-from embedder import eembedder
+from embedder import eembedder as Embedder
 from indexer import FaissIndexer
 from retriever import HybridRetriever
-from reranker import reranker
-from generator import ggenerator
+from reranker import reranker as Reranker
+from generator import ggenerator as Generator
 from recommender import SimpleRecommender
 
+# Dataset paths
+ITEMS_PATH = r"C:\\Users\\KIIT\\OneDrive\\Desktop\\Chat Bot\\Dataset\\Chat Bot Dataset\\Item_to_id.csv"
+FAQ_PATH = r"C:\\Users\\KIIT\\OneDrive\\Desktop\\Chat Bot\\Dataset\\Chat Bot Dataset\\conversationo.csv"
+ORDERS_PATH = r"C:\\Users\\KIIT\\OneDrive\\Desktop\\Chat Bot\\Dataset\\Chat Bot Dataset\\food.csv"
 
 @st.cache_resource
 def prepare():
-    items = load_items("data/items.csv")
-    faq = load_faq("data/faq.csv")
-    orders = load_orders("data/orders.csv")
+    items = load_items(ITEMS_PATH)
+    faq = load_faq(FAQ_PATH)
+    orders = load_orders(ORDERS_PATH)
 
     docs = build_document_store(items, faq, orders)
 
-    embedder = eembedder()
+    embedder = Embedder()
     texts = [d["text"] for d in docs]
-    vectors = embedder.encode(texts)
+    vectors = embedder.encode(texts, normalize=True)
 
     indexer = FaissIndexer(dim=vectors.shape[1])
     indexer.build(vectors, [d["meta"] for d in docs])
 
     retriever = HybridRetriever(docs, embedder, indexer)
-    reranker = reranker()
-    generator = ggenerator()
+    ranker = Reranker()
+    generator = Generator()
     recommender = SimpleRecommender(docs, embedder)
 
-    return docs, retriever, reranker, generator, recommender
-
+    return docs, retriever, ranker, generator, recommender
 
 docs, retriever, reranker, generator, recommender = prepare()
 
 # --- UI ---
 st.title("☕ Café Assistant")
 st.write("Ask about shop timings, menu, prices, or get meal suggestions.")
-
 st.caption(f"📚 Loaded {len(docs)} documents")
 
 with st.sidebar:
@@ -53,7 +55,11 @@ if ask and q.strip():
 
     candidates = retriever.hybrid_search(q, k=10)
     for c in candidates:
-        c["text"] = docs[c["index"]]["text"]
+        idx = c.get("index")
+        if idx is not None and 0 <= idx < len(docs):
+            c["text"] = docs[idx]["text"]
+        else:
+            c["text"] = ""
 
     reranked = reranker.rerank(q, candidates[:8])
     context_docs = reranked[:4]
@@ -73,8 +79,8 @@ if ask and q.strip():
 else:
     st.info("👋 Ask me about the café! (timings, menu, prices, or meal ideas)")
 
-# --- Recommendations always shown ---
+# --- Recommendations ---
 st.subheader("🍴 Quick recommendations")
 recs = recommender.recommend(user_pref if user_pref else "popular", k=3)
 for r in recs:
-    st.write(r["meta"].get("item_name"), "| score:", round(r["score"], 3))
+    st.write(r["meta"].get("item_name", "Unknown"), "| score:", round(r["score"], 3))

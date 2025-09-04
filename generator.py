@@ -1,17 +1,19 @@
-# src/generator.py
+# generator.py
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 import torch
+from typing import List, Dict, Optional, Union
 
-
-class ggenerator:
+class Generator:
     """
     Wrapper around a seq2seq model (e.g., FLAN-T5) for controlled response generation.
     """
 
-    def __init__(self, model_name="google/flan-t5-small", device=None):
-        # device selection
+    def __init__(self, model_name: str = "google/flan-t5-small", device: Optional[Union[int, str]] = None):
+        # Determine device
         if device is None:
             device = 0 if torch.cuda.is_available() else -1
+
+        self.device = device
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
@@ -26,33 +28,24 @@ class ggenerator:
             device=device
         )
 
-    def craft_prompt(self, query, retrieved_docs, user_pref=None):
+    def craft_prompt(self, query: str, retrieved_docs: List[Dict], user_pref: Optional[str] = None) -> str:
         """
         Build a concise context for the generator.
         Keeps token budget small while combining FAQs, items, and text docs.
-
-        Args:
-            query (str): user question
-            retrieved_docs (list[dict]): docs with 'meta' and 'text'
-            user_pref (str, optional): user preferences
         """
         ctx = []
+
         for d in retrieved_docs[:4]:
             meta = d.get("meta", {})
-
             if meta.get("type") == "faq":
-                ctx.append(
-                    f"FAQ: Q: {meta.get('question')} A: {meta.get('answer')}"
-                )
+                ctx.append(f"FAQ: Q: {meta.get('question')} A: {meta.get('answer')}")
             elif meta.get("type") == "item":
-                ctx.append(
-                    f"Item: {meta.get('item_name')} "
-                    f"(orders: {meta.get('num_orders')}, rating: {meta.get('avg_rating')})"
-                )
+                ctx.append(f"Item: {meta.get('item_name')} "
+                           f"(orders: {meta.get('num_orders', 0)}, rating: {meta.get('avg_rating', 0.0)})")
             else:
                 ctx.append(d.get("text", ""))
 
-        context = "\n---\n".join(ctx)
+        context = "\n---\n".join(ctx) if ctx else "No relevant context available."
 
         pref_section = f"\nUser preferences: {user_pref}" if user_pref else ""
 
@@ -64,20 +57,14 @@ class ggenerator:
         )
         return prompt
 
-    def generate(self, prompt, max_length=150, temperature=0.2, num_beams=3):
+    def generate(self, prompt: str, max_length: int = 150, temperature: float = 0.2, num_beams: int = 3) -> str:
         """
         Generate a response given a prompt.
-
-        Args:
-            prompt (str): input text prompt
-            max_length (int): max tokens
-            temperature (float): randomness (not used if do_sample=False)
-            num_beams (int): beam search width
         """
         out = self.pipe(
             prompt,
             max_length=max_length,
-            do_sample=False,
+            do_sample=False,  # deterministic output
             num_beams=num_beams
         )[0]["generated_text"]
 
