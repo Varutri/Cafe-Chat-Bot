@@ -1,11 +1,11 @@
 # src/app_streamlit.py
 import streamlit as st
 from data_loader import load_items, load_faq, load_orders, build_document_store
-from embedder import Embedder
+from embedder import eembedder
 from indexer import FaissIndexer
 from retriever import HybridRetriever
 from reranker import reranker
-from generator import Generator
+from generator import ggenerator
 from recommender import SimpleRecommender
 
 
@@ -17,7 +17,7 @@ def prepare():
 
     docs = build_document_store(items, faq, orders)
 
-    embedder = Embedder()
+    embedder = eembedder()
     texts = [d["text"] for d in docs]
     vectors = embedder.encode(texts)
 
@@ -26,7 +26,7 @@ def prepare():
 
     retriever = HybridRetriever(docs, embedder, indexer)
     reranker = reranker()
-    generator = Generator()
+    generator = ggenerator()
     recommender = SimpleRecommender(docs, embedder)
 
     return docs, retriever, reranker, generator, recommender

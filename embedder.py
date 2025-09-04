@@ -2,7 +2,7 @@
 from sentence_transformers import SentenceTransformer
 import numpy as np
 
-class Embedder:
+class eembedder:
     def __init__(self, model_name="all-MiniLM-L6-v2", device="cpu"):
         self.model = SentenceTransformer(model_name, device=device)
 
