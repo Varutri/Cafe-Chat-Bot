@@ -16,7 +16,7 @@ def load_items(path="C:\\Users\\KIIT\\OneDrive\\Desktop\\Chat Bot\\Dataset\\Chat
 
 def load_faq(path="C:\\Users\\KIIT\\OneDrive\\Desktop\\Chat Bot\\Dataset\\Chat Bot Dataset\\conversationo.csv"):
     df = pd.read_csv(path)
-    df['question'] = df['question'].astype(str).apply(normalize)
+    df['question'] = df['Question'].astype(str).apply(normalize)
     df['answer'] = df['answer'].astype(str)
     
     # Deduplicate FAQs: keep the longest answer for duplicate questions
