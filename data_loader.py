@@ -11,7 +11,7 @@ def normalize(text):
 
 def load_items(path="C:\\Users\\KIIT\\OneDrive\\Desktop\\Chat Bot\\Dataset\\Chat Bot Dataset\\Item_to_id.csv"):
     df = pd.read_csv(path)
-    df['item'] = df['item'].astype(str).apply(normalize)
+    df['item'] = df['name'].astype(str).apply(normalize)
     return df
 
 def load_faq(path="C:\\Users\\KIIT\\OneDrive\\Desktop\\Chat Bot\\Dataset\\Chat Bot Dataset\\conversationo.csv"):
