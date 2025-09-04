@@ -25,7 +25,7 @@ def prepare():
     indexer.build(vectors, [d["meta"] for d in docs])
 
     retriever = HybridRetriever(docs, embedder, indexer)
-    reranker = Reranker()
+    reranker = reranker()
     generator = Generator()
     recommender = SimpleRecommender(docs, embedder)
 
