@@ -1,11 +1,11 @@
 # app_streamlit.py
 import streamlit as st
 from data_loader import load_items, load_faq, load_orders, build_document_store
-from embedder import eembedder as Embedder
+from embedder import  Embedder
 from indexer import FaissIndexer
 from retriever import HybridRetriever
-from reranker import reranker as Reranker
-from generator import ggenerator as Generator
+from reranker import  Reranker
+from generator import  Generator
 from recommender import SimpleRecommender
 
 # Dataset paths
