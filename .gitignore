@@ -1,0 +1,13 @@
+# Ignore virtual environments
+venv/
+.venv/
+
+# Ignore caches
+__pycache__/
+*.pyc
+.DS_Store
+
+# Ignore binaries
+*.dll
+*.lib
+bfg.jar
