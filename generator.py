@@ -51,7 +51,7 @@ class Generator:
 
         prompt = (
             "You are a friendly cafe assistant. "
-            "Use the context to answer the user's question concisely.\n\n"
+            "Your task:- Always give a helpful explanation, not just a one-word reply.- Use complete sentences (2–5 sentences).- Base your answer on the context provided below.- If preferences are given, personalize the answer to match them.- If you are unsure, say so politely and suggest what the customer could try instead.\n\n"
             f"Context:\n{context}{pref_section}\n\n"
             f"Question: {query}\nAnswer:"
         )
