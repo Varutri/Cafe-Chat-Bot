@@ -16,6 +16,25 @@ Skills Tested:
 -Bot interface design
 
 
+PROCESS FOLLOWED:- 
+
+
+
+
+
+<img width="241" height="261" alt="image" src="https://github.com/user-attachments/assets/b0598344-6fc5-4bce-a312-a000402fca6c" />
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
