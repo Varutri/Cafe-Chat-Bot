@@ -16,7 +16,7 @@ Skills Tested:
 -Bot interface design
 
 
-PROCESS FOLLOWED:- 
+PROCESS FOLLOWED FOR CREATING EXTERNAL KNOWLEDGE BASE:- 
 
 
 
